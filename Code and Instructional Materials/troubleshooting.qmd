@@ -1,0 +1,98 @@
+---
+title: "Some steps for troubleshooting R"
+format:
+  html:
+    theme: [journal, custom_styles]
+    df-print: paged
+    smaller: true
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    embed-resources: true
+    code-link: true
+    code-tools: true
+code-annotations: select
+---
+
+```{r setup, include=FALSE }
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+
+```
+
+Encountering errors and unexpected results is an inevitable part of learning any programming language. The teaching staff is here to help, but before you send an email to your TA, its good to do a little troubleshooting to make sure the problem isn't something you can solve on your own.
+
+Every problem is different, but there are some steps that I generally recommend taking when you encounter a problem in R.
+
+## Step 0: Take a little break
+
+In my experience, 99% of errors are the result of stuff like misspelling a variable or forgetting to load a package and they're completely obvious once you've spotted them. There's no way around this, it happens to everyone. The only real advice I can offer here is: take a break and relax your brain. Go for a walk. Eat a sandwich. Pet a cat, etc. Then come back with a fresh set of eyes and retrace your steps to see if you can spot something that looks out of place.
+
+Once you've done this, take a look at the offending output and see if you can get any clues about its origins. When you see messages like: `Error in foo() : could not find function "foo"` or `Error: object 'x' not found` its often either a misspelling or its the result of a variable or function that hasn't been loaded into R yet.
+
+Other messages are a little harder to parse, but you can often copy-paste the error into a search engine and you'll find that [other people have gotten help for the same issue](https://stackoverflow.com/a/18045252). R has a big community of users, and so there's a good chance that someone else has encountered the same problem you're having and has written about how to solve it. Similarly, if you're having an issue with a particular function, [consult the help file](https://www.r-project.org/help.html#:~:text=R%20Help%3A%20help()%20and%20%3F) and see if you can find any useful information there.
+
+When this fails, then move on to step 1.
+
+## Step 1: Clear the environment and restart R
+
+Some errors are caused by unexpected interactions between different libraries or objects in the working environment. In order to rule out issues like this, you want to start with a "fresh" environment with no packages or data loaded.
+
+To restart R, you can press Ctrl + Shift + F10, or just close and reopen R-Studio. Then, to clear the environment, just press the little broom 🧹 icon in the [environment pane](https://docs.posit.co/ide/user/ide/get-started/#rstudio-panes), or enter the following command into the console:
+
+```{r}
+rm(list = ls())
+```
+
+## Step 2: Try to replicate the issue
+
+Now that you have a fresh R instance, try to replicate your problem. Make a new script and call it something like "error_replication" and then try to replicate your error message in as few steps as possible. Remember that you'll need to re-load any packages or data you've been using for your analysis first. For GVPT 201, that usually means at least running [`library(RCPA3)`](https://cran.r-project.org/web/packages/RCPA3/index.html) and possibly loading one of the `world`, `nes`, `gss` or `states` data sets.
+
+Run through each line of code [one step at a time](https://docs.posit.co/ide/user/ide/guide/code/execution.html#executing-a-single-line) until you encounter the problem. If you want to be absolutely sure that your code can be replicated, repeat step 1 and then press the "source" button at the top right of the script editor. This will run the entire script in sequence.
+
+Here's an example of a common error that comes from trying to use the `max` function on a variable that isn't numeric. I might have a lot of other code in my original script, but I only need four lines to replicate this error message and you can easily recreate it yourself by copying these same lines:
+
+```{r, error=TRUE}
+# Step 1: After restarting Rstudio and clearing the environment...
+# Step 2: I load the required packages ----
+library(RCPA3)
+# and import the "world" data set and assign it to a variable
+world<-RCPA3::world
+
+# Step 3: And then I recreate my error message----
+max(world$election.violence.post)
+
+```
+
+Isolating the problem like this can usually make it a lot easier to spot the problem, but if you can replicate the error and you're still not sure how to fix it, then its probably time to move on to the next step.
+
+## Step 3: Send an Email
+
+If you've tried the previous steps and you still haven't resolved your issue, its time to reach out to a classmate, TA, or the instructor. In order to make that process go as smoothly as possible, you want to be sure to pass along sufficient details about your issue so that someone else can help you troubleshoot. So generally this means including:
+
+-   A description of the problem and what you're trying to do
+
+-   The text of the error message (if applicable) or a screenshot of the problematic output
+
+-   **A script that can replicate your problem** in as few steps as possible (see step 2)
+
+Here's an example of how that email might look:
+
+::: {#email .blockquote}
++--------------------------------------------------------------------------------------------------------------------------------+
+| **To:** MySectionTA\@umd.edu                                                                                                   |
++--------------------------------------------------------------------------------------------------------------------------------+
+| **From:** me\@umd.edu                                                                                                          |
++--------------------------------------------------------------------------------------------------------------------------------+
+| **Subject:** GVPT 201: Error when using max                                                                                    |
++--------------------------------------------------------------------------------------------------------------------------------+
+| Hello, I'm working on the homework and I keep getting an error message when I try to use the `max` function.                   |
+|                                                                                                                                |
+| The error message is: `Error in Summary.factor(c(1L, NA, 1L, NA, 1L, 2L, 1L, 1L, 1L, 2L, NA,:‘max’ not meaningful for factors` |
+|                                                                                                                                |
+| I've attached an Rscript that replicates the error below                                                                       |
+|                                                                                                                                |
+| Thank you!                                                                                                                     |
+|                                                                                                                                |
+| **\[here, you would want to attach the error replication script from step 2\]**                                                |
++--------------------------------------------------------------------------------------------------------------------------------+
+:::
